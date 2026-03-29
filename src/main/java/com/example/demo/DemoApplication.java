@@ -1,11 +1,11 @@
-package com.example.secure;
+package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SecureLoginApp {
+public class DemoApplication {
     public static void main(String[] args) {
-        SpringApplication.run(SecureLoginApp.class, args);
+        SpringApplication.run(DemoApplication.class, args);
     }
 }

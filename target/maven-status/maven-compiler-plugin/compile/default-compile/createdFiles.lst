@@ -1,2 +1,3 @@
-com\example\secure\LoginController.class
-com\example\secure\SecureLoginApp.class
+com\example\demo\DemoApplication.class
+com\example\demo\controller\LoginController.class
+com\example\demo\service\LoginService.class
