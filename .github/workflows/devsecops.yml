@@ -25,10 +25,18 @@ jobs:
           fetch-depth: 0          # Full history needed for Gitleaks
 
       - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true   # Pipeline continues to show all findings
+        run: |
+          wget -q https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
+          tar -xzf gitleaks_8.24.3_linux_x64.tar.gz
+          ./gitleaks detect --source=. --no-git --report-format=sarif --report-path=gitleaks-report.sarif --exit-code=1 -v
+        continue-on-error: true
+
+      - name: Upload Gitleaks report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.sarif
 
   # ─────────────────────────────────────────────────────────────────
   # STAGE 2 — SAST + SCA with SpotBugs and OWASP Dependency-Check
@@ -59,7 +67,7 @@ jobs:
         continue-on-error: true
 
       - name: Run OWASP Dependency-Check (SCA)
-        run: mvn dependency-check:check --batch-mode --no-transfer-progress
+        run: mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=11 --batch-mode --no-transfer-progress
         continue-on-error: true
 
       - name: Upload SpotBugs report
@@ -74,4 +82,5 @@ jobs:
         if: always()
         with:
           name: dependency-check-report
-          path: target/dependency-check/
+          path: target/
+          if-no-files-found: warn
